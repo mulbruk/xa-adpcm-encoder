@@ -202,9 +202,9 @@ impl fmt::Display for APCMChunk {
 pub(crate) fn write_apcm_aiff_header<W: Write>(num_samples: usize, wtr: &mut W) -> Result<()> {
   let mut num_sectors = num_samples / ADPCM_SECTOR_SAMPLES;
   if num_samples % ADPCM_SECTOR_SAMPLES != 0 { num_sectors += 1 }
-  let num_sectors = num_sectors + 3; // Three blank sectors at start
+  let num_sectors = num_sectors;
 
-  let num_samples = num_samples + 3 * ADPCM_SECTOR_SAMPLES;
+  let num_samples = num_samples;
   
   let data_size = i32::try_from(num_sectors * XA_ADPCM_SECTOR_SIZE)?;
   let num_samples = u32::try_from(num_samples)?;

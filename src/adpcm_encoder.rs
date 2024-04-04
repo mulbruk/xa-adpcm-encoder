@@ -267,30 +267,11 @@ fn encode_sector<R: Read, W: Write>(encoder_state: &mut EncoderState, input: &mu
   Ok(())
 }
 
-struct ZeroReader;
-impl ZeroReader {
-  fn new() -> Self {
-    ZeroReader {}
-  }
-}
-impl Read for ZeroReader {
-  fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-    for n in 0..buf.len() { buf[n] = 0; }
-    
-    Ok(buf.len())
-  }
-}
-
 pub(crate) fn encode_xa_adpcm<R: Read, W: Write>(samples_count: usize, input: &mut R, output: &mut W) -> Result<()> {
   let mut encoder_state = EncoderState::new();
   
   let mut num_sectors = samples_count / ADPCM_SECTOR_SAMPLES;
   if samples_count % ADPCM_SECTOR_SAMPLES != 0 { num_sectors += 1 }
-
-  let mut zeroes = ZeroReader::new();
-  for _ in 0..3 {
-    encode_sector(&mut encoder_state, &mut zeroes, output)?;
-  }
 
   for _ in 0..num_sectors {
     encode_sector(&mut encoder_state, input, output)?;
